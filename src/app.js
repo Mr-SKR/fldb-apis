@@ -15,6 +15,7 @@ const {
 require("./models/video");
 require("./models/searchIndex");
 
+const PORT = process.env.PORT || 5000;
 const youtube = google.youtube({
   version: "v3",
   auth: process.env.YOUTUBE_API_KEY,
@@ -166,6 +167,6 @@ app.get("/isopen/:videoId", async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Example app listening at http://localhost:${process.env.PORT}`);
+app.listen(PORT, () => {
+  console.log(`Example app listening at http://localhost:${PORT}`);
 });

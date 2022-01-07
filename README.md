@@ -23,7 +23,6 @@ heroku login
 heroku git:remote -a fldb-apis
 heroku config:set MONGO_URI="<YOUR_MONGO_URI>"
 heroku config:set YOUTUBE_API_KEY="<YOUR_YOUTUBE_API_KEY>"
-heroku config:set PORT="<YOUR_PORT>"
 
 git add .
 git commit -m "<commit-message>"
@@ -31,5 +30,5 @@ git commit -m "<commit-message>"
 <!-- Only First time  -->
 heroku create
 
-git push heroku master
+git push heroku main
 ```
