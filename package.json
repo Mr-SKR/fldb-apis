@@ -1,0 +1,33 @@
+{
+  "name": "fldb-apis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mr-SKR/fldb-apis.git"
+  },
+  "author": "Suresh Reddy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mr-SKR/fldb-apis/issues"
+  },
+  "homepage": "https://github.com/Mr-SKR/fldb-apis#readme",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "get-urls": "^10.0.1",
+    "googleapis": "^92.0.0",
+    "mongoose": "^6.1.5",
+    "node-cron": "^3.0.0",
+    "trace-redirect": "^1.0.6"
+  },
+  "engines": {
+    "node": "14.x"
+  }
+}
