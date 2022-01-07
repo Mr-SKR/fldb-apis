@@ -106,7 +106,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/", async (_req, res) => {
-  res.send("Hello World");
+  res.send("Welcome to Food Lovers Database (FLDB) APIs");
 });
 
 app.get("/videos", async (_req, res) => {
