@@ -73,7 +73,9 @@ const scheduler = async () => {
       if (!existingVideo) {
         new Video(result).save();
       } else {
-        Video.updateOne({ videoId: result.videoId }, result).save();
+        Video.updateOne({ videoId: result.videoId }, result, (err, res) => {
+          err ? console.log(err) : console.log(res);
+        });
       }
       const existingVideoIndex = await SearchIndex.findOne({
         videoId: result.videoId,
@@ -81,7 +83,13 @@ const scheduler = async () => {
       if (!existingVideoIndex) {
         new SearchIndex(result).save();
       } else {
-        SearchIndex.updateOne({ videoId: result.videoId }, result).save();
+        SearchIndex.updateOne(
+          { videoId: result.videoId },
+          result,
+          (err, res) => {
+            err ? console.log(err) : console.log(res);
+          }
+        );
       }
     }
     console.log("Scheduler execution completed");
@@ -129,7 +137,7 @@ app.get("/test", async (_req, res) => {
     // );
     // console.log(result);
     await scheduler();
-    res.send(result);
+    res.send("Hello");
   } catch (err) {
     console.error(err);
     res.send(err);

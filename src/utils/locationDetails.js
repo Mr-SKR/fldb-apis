@@ -2,16 +2,17 @@ const getUrls = require("get-urls");
 const tracer = require("trace-redirect").default;
 const axios = require("axios").default;
 
+const config = require("../config/config");
+
 const fetchLocationDetails = async (description) => {
   let locationDetails = {};
   let locationURL = null;
   const urls = getUrls(String(description));
-  for (const url of urls) {
-    const result = await tracer(url);
-    if (url.includes("g.page")) {
-      // TODO: Handle g.page links. Example: https://g.page/malgudi-mylari-mane
-      break;
+  for (let url of urls) {
+    if (config.replaceLinks.hasOwnProperty(url)) {
+      url = config.replaceLinks[url];
     }
+    const result = await tracer(url);
 
     if (result.includes("maps")) {
       const matches = [
