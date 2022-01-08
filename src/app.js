@@ -73,15 +73,7 @@ const scheduler = async () => {
       if (!existingVideo) {
         new Video(result).save();
       } else {
-        Video.findOneAndReplace(
-          { videoId: result.videoId },
-          result,
-          function (err, _result) {
-            if (err) {
-              console.error(err);
-            }
-          }
-        );
+        Video.updateOne({ videoId: result.videoId }, result).save();
       }
       const existingVideoIndex = await SearchIndex.findOne({
         videoId: result.videoId,
@@ -89,17 +81,7 @@ const scheduler = async () => {
       if (!existingVideoIndex) {
         new SearchIndex(result).save();
       } else {
-        SearchIndex.findOneAndReplace(
-          { videoId: result.videoId },
-          result,
-          function (err, result) {
-            if (err) {
-              console.error(err);
-            } else {
-              console.log(result);
-            }
-          }
-        );
+        SearchIndex.updateOne({ videoId: result.videoId }, result).save();
       }
     }
     console.log("Scheduler execution completed");
