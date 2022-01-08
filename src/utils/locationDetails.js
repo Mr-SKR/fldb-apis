@@ -38,7 +38,10 @@ const fetchLocationDetails = async (description) => {
       params: {
         ...locationURLParams,
       },
-      headers = {'Content-Type': 'application/json','Referer': '*.fldb-apis.herokuapp.com/*'}
+      headers: {
+        "Content-Type": "application/json",
+        Referer: "*.fldb-apis.herokuapp.com/*",
+      },
     });
     locationDetails = response.data.result;
   }
@@ -56,7 +59,10 @@ const isPlaceOpen = async (placeId) => {
     params: {
       ...locationURLParams,
     },
-    headers: {'Content-Type': 'application/json','Referer': '*.fldb-apis.herokuapp.com/*'}
+    headers: {
+      "Content-Type": "application/json",
+      Referer: "*.fldb-apis.herokuapp.com/*",
+    },
   });
   return response.data.result;
 };
