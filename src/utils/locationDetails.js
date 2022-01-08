@@ -1,12 +1,14 @@
 const getUrls = require("get-urls");
 const tracer = require("trace-redirect").default;
-const axios = require("axios").default;
+const { Client } = require("@googlemaps/google-maps-services-js");
 
 const config = require("../config/config");
 
+const googleMapsClient = new Client({});
+
 const fetchLocationDetails = async (description) => {
   let locationDetails = {};
-  let locationURL = null;
+  let locationURLParams = null;
   const urls = getUrls(String(description));
   for (let url of urls) {
     if (config.replaceLinks.hasOwnProperty(url)) {
@@ -20,16 +22,22 @@ const fetchLocationDetails = async (description) => {
       ];
       const hexLattitude = matches[0],
         hexLongitude = matches[1];
-      locationURLTemplate = `https://maps.googleapis.com/maps/api/place/details/json?ftid=${hexLattitude}:${hexLongitude}&fields=business_status,formatted_address,name,geometry,international_phone_number,place_id,rating,url,opening_hours&key=${process.env.YOUTUBE_API_KEY}`;
       if (hexLattitude && hexLongitude) {
-        locationURL = locationURLTemplate;
+        locationURLParams = {
+          ftid: `${hexLattitude}:${hexLongitude}`,
+          fields:
+            "business_status,formatted_address,name,geometry,international_phone_number,place_id,rating,url,opening_hours",
+          key: process.env.YOUTUBE_API_KEY,
+        };
       }
       break;
     }
   }
-  if (locationURL) {
-    const response = await axios.get(locationURL, {
-      headers: { "X-Referer": "https://fl-db.com/" },
+  if (locationURLParams) {
+    const response = await googleMapsClient.placeDetails({
+      params: {
+        ...locationURLParams,
+      },
     });
     locationDetails = response.data.result;
   }
@@ -38,9 +46,15 @@ const fetchLocationDetails = async (description) => {
 };
 
 const isPlaceOpen = async (placeId) => {
-  const locationURLTemplate = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=opening_hours,business_status&key=${process.env.YOUTUBE_API_KEY}`;
-  const response = await axios.get(locationURLTemplate, {
-    headers: { "X-Referer": "https://fl-db.com/" },
+  const locationURLParams = {
+    place_id: placeId,
+    fields: "opening_hours,business_status",
+    key: process.env.YOUTUBE_API_KEY,
+  };
+  const response = await googleMapsClient.placeDetails({
+    params: {
+      ...locationURLParams,
+    },
   });
   return response.data.result;
 };
