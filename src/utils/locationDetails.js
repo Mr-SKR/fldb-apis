@@ -15,7 +15,7 @@ const fetchLocationDetails = async (description) => {
 
     if (result.includes("maps")) {
       const matches = [
-        ...result.matchAll(new RegExp("0[xX][0-9a-fA-F]{16}", "g")),
+        ...result.matchAll(new RegExp("0[xX][0-9a-fA-F]+", "g")),
       ];
       const hexLattitude = matches[0],
         hexLongitude = matches[1];
