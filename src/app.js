@@ -94,8 +94,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 // Set CORS headers
-app.use((req, res, next) => {
-  res.append("Access-Control-Allow-Origin", ["https://fldb.in"]);
+app.use((_req, res, next) => {
+  res.append("Access-Control-Allow-Origin", ["https://fl-db.in"]);
   res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
   res.append("Access-Control-Allow-Headers", "Content-Type");
   next();
