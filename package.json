@@ -23,6 +23,7 @@
     "express": "^4.17.2",
     "get-urls": "^10.0.1",
     "googleapis": "^92.0.0",
+    "is-valid-http-url": "^1.0.3",
     "mongoose": "^6.1.5",
     "node-cron": "^3.0.0",
     "trace-redirect": "^1.0.6"
