@@ -28,7 +28,9 @@ const fetchLocationDetails = async (description) => {
     }
   }
   if (locationURL) {
-    const response = await axios.get(locationURL);
+    const response = await axios.get(locationURL, {
+      headers: { "X-Referer": "https://fl-db.com/" },
+    });
     locationDetails = response.data.result;
   }
 
@@ -37,7 +39,9 @@ const fetchLocationDetails = async (description) => {
 
 const isPlaceOpen = async (placeId) => {
   const locationURLTemplate = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=opening_hours,business_status&key=${process.env.YOUTUBE_API_KEY}`;
-  const response = await axios.get(locationURLTemplate);
+  const response = await axios.get(locationURLTemplate, {
+    headers: { "X-Referer": "https://fl-db.com/" },
+  });
   return response.data.result;
 };
 
