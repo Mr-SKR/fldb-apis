@@ -179,6 +179,19 @@ app.get("/isopen/:videoId", async (req, res) => {
   }
 });
 
+app.get("/scheduler", async (req, res) => {
+  try {
+    await scheduler();
+    res.send("Scheduler execution completed");
+  } catch (err) {
+    console.error(err);
+    // TODO: Return error status code
+    res.send(
+      "Something went wrong. Please make sure that the request is valid"
+    );
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening at http://localhost:${PORT}`);
 });
