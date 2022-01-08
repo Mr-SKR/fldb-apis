@@ -27,7 +27,7 @@ const fetchLocationDetails = async (description) => {
         locationURLParams = {
           ftid: `${hexLattitude}:${hexLongitude}`,
           fields:
-            "business_status,formatted_address,name,geometry,international_phone_number,place_id,rating,url,opening_hours",
+            "business_status,formatted_address,name,geometry,international_phone_number,place_id,rating,url,opening_hours,website",
           key: process.env.YOUTUBE_API_KEY,
         };
         hasValidLocationParams = true;
@@ -47,7 +47,7 @@ const fetchLocationDetails = async (description) => {
       });
       locationDetails = response.data.result;
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   }
 
