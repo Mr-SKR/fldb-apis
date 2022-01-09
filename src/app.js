@@ -4,6 +4,7 @@ const { google } = require("googleapis");
 const mongoose = require("mongoose");
 var cron = require("node-cron");
 const path = require("path");
+require("newrelic");
 
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const config = require("./config/config");

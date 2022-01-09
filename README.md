@@ -13,6 +13,15 @@ Create a .env file at the root of the directory with values filled for below key
 MONGO_URI=<YOUR_MONGO_URI>
 YOUTUBE_API_KEY=<YOUR_YOUTUBE_API_KEY>
 PORT=<YOUR_PORT>
+NEW_RELIC_APP_NAME=<NEW_RELIC_APP_NAME>
+NEW_RELIC_LICENSE_KEY=<NEW_RELIC_LICENSE_KEY>
+```
+
+### New relic
+
+```
+npm install newrelic --save
+
 ```
 
 ### Heroku
