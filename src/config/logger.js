@@ -1,11 +1,14 @@
 const winston = require("winston");
-const newrelicFormatter = require("@newrelic/winston-enricher");
 
 const logger = winston.createLogger({
   level: "info",
   format: winston.format.combine(
-    winston.format.label({ label: "fldb" }),
-    newrelicFormatter()
+    format.timestamp({
+      format: "YYYY-MM-DD HH:mm:ss",
+    }),
+    format.errors({ stack: true }),
+    format.splat(),
+    format.json()
   ),
   transports: [
     //

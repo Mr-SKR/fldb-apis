@@ -19,7 +19,6 @@
   "homepage": "https://github.com/Mr-SKR/fldb-apis#readme",
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.3.5",
-    "@newrelic/winston-enricher": "^2.1.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "get-urls": "^10.0.1",
