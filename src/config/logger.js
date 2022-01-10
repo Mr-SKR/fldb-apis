@@ -1,8 +1,8 @@
-const winston = require("winston");
+const { createLogger, format, transports } = require("winston");
 
-const logger = winston.createLogger({
+const logger = createLogger({
   level: "info",
-  format: winston.format.combine(
+  format: format.combine(
     format.timestamp({
       format: "YYYY-MM-DD HH:mm:ss",
     }),
@@ -15,8 +15,8 @@ const logger = winston.createLogger({
     // - Write all logs with importance level of `error` or less to `error.log`
     // - Write all logs with importance level of `info` or less to `combined.log`
     //
-    new winston.transports.File({ filename: "error.log", level: "error" }),
-    new winston.transports.File({ filename: "combined.log" }),
+    new transports.File({ filename: "error.log", level: "error" }),
+    new transports.File({ filename: "combined.log" }),
   ],
 });
 
@@ -26,8 +26,8 @@ const logger = winston.createLogger({
 //
 if (process.env.NODE_ENV !== "production") {
   logger.add(
-    new winston.transports.Console({
-      format: winston.format.simple(),
+    new transports.Console({
+      format: format.simple(),
     })
   );
 }
