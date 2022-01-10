@@ -31,7 +31,7 @@ mongoose.connect(process.env.MONGO_URI);
 
 const scheduler = async () => {
   console.log("Scheduler execution started");
-  logger.log("Scheduler execution started");
+  logger.info("Scheduler execution started");
   try {
     let videosInPlayLists = [],
       videoDetailsList = [],
@@ -54,7 +54,7 @@ const scheduler = async () => {
       }
     }
     console.log("Playlist video collection complete");
-    logger.log("Playlist video collection complete");
+    logger.info("Playlist video collection complete");
     for (const videoInPlayLists of videosInPlayLists) {
       const videoDetails = await youtube.videos.list({
         part: "snippet",
@@ -65,7 +65,7 @@ const scheduler = async () => {
       }
     }
     console.log("Video details collection complete");
-    logger.log("Video details collection complete");
+    logger.info("Video details collection complete");
     for (const video of videoDetailsList) {
       if (video?.snippet?.description && video?.snippet?.title && video?.id) {
         const geodetails = await fetchLocationDetails(
@@ -83,7 +83,7 @@ const scheduler = async () => {
       }
     }
     console.log("Location details extraction complete");
-    logger.log("Location details extraction complete");
+    logger.info("Location details extraction complete");
     for (const result of results) {
       const existingVideo = await Video.findOne({ videoId: result.videoId });
       if (!existingVideo) {
@@ -115,7 +115,7 @@ const scheduler = async () => {
       }
     }
     console.log("Scheduler execution completed");
-    logger.log("Scheduler execution completed");
+    logger.info("Scheduler execution completed");
   } catch (err) {
     console.error(err);
     logger.error(err);
@@ -224,5 +224,5 @@ app.get("/scheduler", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Example app listening at http://localhost:${PORT}`);
-  logger.log(`Example app listening at http://localhost:${PORT}`);
+  logger.info(`Example app listening at http://localhost:${PORT}`);
 });
