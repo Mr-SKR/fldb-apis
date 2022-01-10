@@ -65,6 +65,4 @@ git push heroku <branch-name>
 <!-- View logs -->
 heroku logs --tail
 
-<!-- Heroku dyno keep-alive using new relic -->
-heroku addons:add newrelic:standard
 ```
