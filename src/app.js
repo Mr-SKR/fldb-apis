@@ -10,7 +10,7 @@ const mongoose = require("mongoose");
 const cron = require("node-cron");
 
 const config = require("./config/config");
-const logger = require("./config/logger");
+const { logger } = require("./config/logger");
 
 const {
   fetchLocationDetails,

@@ -31,6 +31,7 @@ YOUTUBE_API_KEY=<YOUR_YOUTUBE_API_KEY>
 PORT=<YOUR_PORT>
 NEW_RELIC_APP_NAME=<NEW_RELIC_APP_NAME>
 NEW_RELIC_LICENSE_KEY=<NEW_RELIC_LICENSE_KEY>
+NODE_ENV=development | production
 ```
 
 ### Run locally
@@ -51,6 +52,7 @@ heroku config:set MONGO_URI="<YOUR_MONGO_URI>"
 heroku config:set YOUTUBE_API_KEY="<YOUR_YOUTUBE_API_KEY>"
 heroku config:set NEW_RELIC_APP_NAME="<NEW_RELIC_APP_NAME>"
 heroku config:set NEW_RELIC_LICENSE_KEY="<NEW_RELIC_LICENSE_KEY>"
+heroku config:set NODE_ENV=production
 
 git add .
 git commit -m "<commit-message>"
