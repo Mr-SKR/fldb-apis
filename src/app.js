@@ -1,13 +1,16 @@
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+// TODO: Send detailed logs to relic
+require("newrelic");
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const { google } = require("googleapis");
 const mongoose = require("mongoose");
-var cron = require("node-cron");
-const path = require("path");
-require("newrelic");
+const cron = require("node-cron");
 
-require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const config = require("./config/config");
+const logger = require("./config/logger");
 
 const {
   fetchLocationDetails,
@@ -28,6 +31,7 @@ mongoose.connect(process.env.MONGO_URI);
 
 const scheduler = async () => {
   console.log("Scheduler execution started");
+  logger.log("Scheduler execution started");
   try {
     let videosInPlayLists = [],
       videoDetailsList = [],
@@ -50,6 +54,7 @@ const scheduler = async () => {
       }
     }
     console.log("Playlist video collection complete");
+    logger.log("Playlist video collection complete");
     for (const videoInPlayLists of videosInPlayLists) {
       const videoDetails = await youtube.videos.list({
         part: "snippet",
@@ -60,6 +65,7 @@ const scheduler = async () => {
       }
     }
     console.log("Video details collection complete");
+    logger.log("Video details collection complete");
     for (const video of videoDetailsList) {
       if (video?.snippet?.description && video?.snippet?.title && video?.id) {
         const geodetails = await fetchLocationDetails(
@@ -73,16 +79,21 @@ const scheduler = async () => {
         });
       } else {
         console.error(`Could not extract properties from ${video}`);
+        logger.error(`Could not extract properties from ${video}`);
       }
     }
     console.log("Location details extraction complete");
+    logger.log("Location details extraction complete");
     for (const result of results) {
       const existingVideo = await Video.findOne({ videoId: result.videoId });
       if (!existingVideo) {
         new Video(result).save();
       } else {
         Video.updateOne({ videoId: result.videoId }, result, (err, _res) => {
-          err && console.error(err);
+          if (err) {
+            console.error(err);
+            logger.error(err);
+          }
         });
       }
       const existingVideoIndex = await SearchIndex.findOne({
@@ -95,18 +106,23 @@ const scheduler = async () => {
           { videoId: result.videoId },
           result,
           (err, _res) => {
-            err && console.error(err);
+            if (err) {
+              console.error(err);
+              logger.error(err);
+            }
           }
         );
       }
     }
     console.log("Scheduler execution completed");
+    logger.log("Scheduler execution completed");
   } catch (err) {
     console.error(err);
+    logger.error(err);
   }
 };
 
-cron.schedule("* 3 * * *", scheduler);
+cron.schedule("* 0 * * *", scheduler);
 
 const app = express();
 // parse application/x-www-form-urlencoded
@@ -131,6 +147,7 @@ app.get("/videos", async (_req, res) => {
     res.send(allVideos);
   } catch (err) {
     console.error(err);
+    logger.error(err);
     // TODO: Return error status code
     res.send(
       "Something went wrong. Please make sure that the request is valid"
@@ -143,12 +160,14 @@ app.get("/videos/:videoId", async (req, res) => {
     const video = await Video.find({ videoId: req.params.videoId });
     if (!video.length) {
       console.error(err);
+      logger.error(err);
       // TODO: Return error status code
       res.send("Please make sure that valid video id is used");
     }
     res.send(video[0]);
   } catch (err) {
     console.error(err);
+    logger.error(err);
     // TODO: Return error status code
     res.send(
       "Something went wrong. Please make sure that the request is valid"
@@ -162,6 +181,7 @@ app.get("/searchindices", async (_req, res) => {
     res.send(searchIndices);
   } catch (err) {
     console.error(err);
+    logger.error(err);
     // TODO: Return error status code
     res.send(
       "Something went wrong. Please make sure that the request is valid"
@@ -180,6 +200,7 @@ app.get("/isopen/:videoId", async (req, res) => {
     res.send(isOpen);
   } catch (err) {
     console.error(err);
+    logger.error(err);
     // TODO: Return error status code
     res.send(
       "Something went wrong. Please make sure that the request is valid"
@@ -193,6 +214,7 @@ app.get("/scheduler", async (req, res) => {
     res.send("Scheduler execution completed");
   } catch (err) {
     console.error(err);
+    logger.error(err);
     // TODO: Return error status code
     res.send(
       "Something went wrong. Please make sure that the request is valid"
@@ -202,4 +224,5 @@ app.get("/scheduler", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Example app listening at http://localhost:${PORT}`);
+  logger.log(`Example app listening at http://localhost:${PORT}`);
 });

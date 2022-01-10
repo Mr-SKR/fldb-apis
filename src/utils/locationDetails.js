@@ -4,6 +4,7 @@ const isValidUrl = require("is-valid-http-url");
 const { Client } = require("@googlemaps/google-maps-services-js");
 
 const config = require("../config/config");
+const logger = require("./config/logger");
 
 const googleMapsClient = new Client({});
 
@@ -48,6 +49,7 @@ const fetchLocationDetails = async (description) => {
       locationDetails = response.data.result;
     } catch (err) {
       // console.error(err);
+      logger.error(err);
     }
   }
 
