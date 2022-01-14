@@ -56,22 +56,4 @@ const fetchLocationDetails = async (description) => {
   return locationDetails;
 };
 
-const isPlaceOpen = async (placeId) => {
-  const locationURLParams = {
-    place_id: placeId,
-    fields: "opening_hours,business_status",
-    key: process.env.YOUTUBE_API_KEY,
-  };
-  const response = await googleMapsClient.placeDetails({
-    params: {
-      ...locationURLParams,
-    },
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data.result;
-};
-
 exports.fetchLocationDetails = fetchLocationDetails;
-exports.isPlaceOpen = isPlaceOpen;

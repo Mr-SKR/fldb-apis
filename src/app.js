@@ -14,10 +14,7 @@ const fs = require(`fs`);
 const config = require("./config/config");
 const { logger } = require("./config/logger");
 
-const {
-  fetchLocationDetails,
-  isPlaceOpen,
-} = require("./utils/locationDetails");
+const { fetchLocationDetails } = require("./utils/locationDetails");
 require("./models/video");
 require("./models/searchIndex");
 
@@ -196,25 +193,6 @@ app.get("/searchindices", async (_req, res) => {
   try {
     const searchIndices = await SearchIndex.find({});
     res.send(searchIndices);
-  } catch (err) {
-    console.error(err);
-    logger.error(err);
-    // TODO: Return error status code
-    res.send(
-      "Something went wrong. Please make sure that the request is valid"
-    );
-  }
-});
-
-app.get("/isopen/:videoId", async (req, res) => {
-  try {
-    const existingVideo = await Video.findOne({ videoId: req.params.videoId });
-    if (!existingVideo) {
-      res.send("Please make sure that valid video id is used");
-      res.end();
-    }
-    const isOpen = await isPlaceOpen(existingVideo.place_id);
-    res.send(isOpen);
   } catch (err) {
     console.error(err);
     logger.error(err);
