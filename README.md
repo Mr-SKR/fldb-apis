@@ -71,6 +71,8 @@ heroku logs --tail
 
 [Guide](https://medium.com/@nitinpatel_20236/how-to-create-an-https-server-on-localhost-using-express-366435d61f28)
 
+Create a directory by name `cert` under src directory and generate cert.pem and key.pem
+
 ```
 openssl req -x509 -newkey rsa:2048 -keyout keytmp.pem -out cert.pem
 openssl rsa -in keytmp.pem -out key.pem
