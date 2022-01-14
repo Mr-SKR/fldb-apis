@@ -4,10 +4,12 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 require("newrelic");
 
 const express = require("express");
+const https = require("https");
 const bodyParser = require("body-parser");
 const { google } = require("googleapis");
 const mongoose = require("mongoose");
 const cron = require("node-cron");
+const fs = require(`fs`);
 
 const config = require("./config/config");
 const { logger } = require("./config/logger");
@@ -122,7 +124,7 @@ const scheduler = async () => {
   }
 };
 
-cron.schedule("* 0 * * *", scheduler);
+cron.schedule("* * 1 * *", scheduler);
 
 const app = express();
 // parse application/x-www-form-urlencoded
@@ -130,12 +132,27 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 // Set CORS headers
-app.use((_req, res, next) => {
-  res.append("Access-Control-Allow-Origin", ["https://fl-db.in"]);
-  res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-  res.append("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
+
+if (process.env.NODE_ENV === "production") {
+  app.use((_req, res, next) => {
+    res.append("Access-Control-Allow-Origin", ["https://fl-db.in"]);
+    res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.append("Access-Control-Allow-Headers", "Content-Type");
+    next();
+  });
+} else {
+  app.use((_req, res, next) => {
+    res.append("Access-Control-Allow-Origin", ["*"]);
+    res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.append("Access-Control-Allow-Headers", "Content-Type");
+    next();
+  });
+}
+
+const key = fs.readFileSync(path.resolve(__dirname, "./cert/key.pem")),
+  cert = fs.readFileSync(path.resolve(__dirname, "./cert/cert.pem"));
+
+const server = https.createServer({ key: key, cert: cert }, app);
 
 app.get("/", async (_req, res) => {
   res.send("Welcome to Food Lovers Database (FLDB) APIs");
@@ -208,21 +225,13 @@ app.get("/isopen/:videoId", async (req, res) => {
   }
 });
 
-app.get("/scheduler", async (req, res) => {
-  try {
-    await scheduler();
-    res.send("Scheduler execution completed");
-  } catch (err) {
-    console.error(err);
-    logger.error(err);
-    // TODO: Return error status code
-    res.send(
-      "Something went wrong. Please make sure that the request is valid"
-    );
-  }
-});
-
-app.listen(PORT, () => {
-  console.log(`Example app listening at http://localhost:${PORT}`);
-  logger.info(`Example app listening at http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  server.listen(PORT, () => {
+    console.log(`Example app listening at https://localhost:${PORT}`);
+  });
+} else {
+  app.listen(PORT, () => {
+    console.log(`Example app listening at http://localhost:${PORT}`);
+    logger.info(`Example app listening at http://localhost:${PORT}`);
+  });
+}

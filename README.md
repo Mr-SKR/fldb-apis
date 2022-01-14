@@ -66,3 +66,12 @@ git push heroku <branch-name>
 heroku logs --tail
 
 ```
+
+### Create a cert for hosting express on https on localhost (optional)
+
+[Guide](https://medium.com/@nitinpatel_20236/how-to-create-an-https-server-on-localhost-using-express-366435d61f28)
+
+```
+openssl req -x509 -newkey rsa:2048 -keyout keytmp.pem -out cert.pem
+openssl rsa -in keytmp.pem -out key.pem
+```
