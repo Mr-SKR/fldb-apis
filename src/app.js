@@ -124,7 +124,7 @@ const scheduler = async () => {
   }
 };
 
-cron.schedule("* * 1 * *", scheduler);
+cron.schedule("* * 10 * *", scheduler);
 
 const app = express();
 // parse application/x-www-form-urlencoded
