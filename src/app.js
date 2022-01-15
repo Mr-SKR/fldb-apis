@@ -125,11 +125,6 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-const key = fs.readFileSync(path.resolve(__dirname, "./cert/key.pem")),
-  cert = fs.readFileSync(path.resolve(__dirname, "./cert/cert.pem"));
-
-const server = https.createServer({ key: key, cert: cert }, app);
-
 app.get("/", async (_req, res) => {
   res.send("Welcome to Food Lovers Database (FLDB) APIs");
 });
@@ -182,13 +177,18 @@ app.get("/searchindices", async (_req, res) => {
   }
 });
 
-if (process.env.NODE_ENV !== "production") {
-  server.listen(PORT, () => {
-    console.log(`Example app listening at https://localhost:${PORT}`);
-  });
-} else {
+if (process.env.NODE_ENV === "production") {
   app.listen(PORT, () => {
     console.log(`Example app listening at http://localhost:${PORT}`);
     logger.info(`Example app listening at http://localhost:${PORT}`);
+  });
+} else {
+  const key = fs.readFileSync(path.resolve(__dirname, "./cert/key.pem")),
+    cert = fs.readFileSync(path.resolve(__dirname, "./cert/cert.pem"));
+
+  const server = https.createServer({ key: key, cert: cert }, app);
+
+  server.listen(PORT, () => {
+    console.log(`Example app listening at https://localhost:${PORT}`);
   });
 }
