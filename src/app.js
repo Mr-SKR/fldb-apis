@@ -67,15 +67,20 @@ const scheduler = async () => {
     logger.info("Video details collection complete");
     for (const video of videoDetailsList) {
       if (video?.snippet?.description && video?.snippet?.title && video?.id) {
-        const geodetails = await fetchLocationDetails(
-          video.snippet.description
-        );
-        results = results.concat({
+        const existingVideo = await SearchIndex.findOne({
           videoId: video.id,
-          videoTitle: video.snippet.title,
-          videoDescription: video.snippet.description,
-          ...geodetails,
         });
+        if (!existingVideo) {
+          const geodetails = await fetchLocationDetails(
+            video.snippet.description
+          );
+          results = results.concat({
+            videoId: video.id,
+            videoTitle: video.snippet.title,
+            videoDescription: video.snippet.description,
+            ...geodetails,
+          });
+        }
       } else {
         console.error(`Could not extract properties from ${video}`);
         logger.error(`Could not extract properties from ${video}`);
@@ -84,34 +89,8 @@ const scheduler = async () => {
     console.log("Location details extraction complete");
     logger.info("Location details extraction complete");
     for (const result of results) {
-      const existingVideo = await Video.findOne({ videoId: result.videoId });
-      if (!existingVideo) {
-        new Video(result).save();
-      } else {
-        Video.updateOne({ videoId: result.videoId }, result, (err, _res) => {
-          if (err) {
-            console.error(err);
-            logger.error(err);
-          }
-        });
-      }
-      const existingVideoIndex = await SearchIndex.findOne({
-        videoId: result.videoId,
-      });
-      if (!existingVideoIndex) {
-        new SearchIndex(result).save();
-      } else {
-        SearchIndex.updateOne(
-          { videoId: result.videoId },
-          result,
-          (err, _res) => {
-            if (err) {
-              console.error(err);
-              logger.error(err);
-            }
-          }
-        );
-      }
+      new Video(result).save();
+      new SearchIndex(result).save();
     }
     console.log("Scheduler execution completed");
     logger.info("Scheduler execution completed");

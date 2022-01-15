@@ -14,28 +14,53 @@ const fetchLocationDetails = async (description) => {
   let hasValidLocationParams = false;
   const urls = getUrls(String(description));
   for (let url of urls) {
-    if (url.includes("maps") && isValidUrl(url)) {
+    if (isValidUrl(url)) {
+      let tracerResult = "",
+        matches;
+
       if (config.replaceLinks.hasOwnProperty(url)) {
         url = config.replaceLinks[url];
       }
-      const result = await tracer(url);
-      const matches = [
-        ...result.matchAll(new RegExp("0[xX][0-9a-fA-F]+", "g")),
-      ];
-      const hexLattitude = matches[0],
-        hexLongitude = matches[1];
-      if (hexLattitude && hexLongitude) {
-        locationURLParams = {
-          ftid: `${hexLattitude}:${hexLongitude}`,
-          fields:
-            "business_status,formatted_address,name,geometry,international_phone_number,place_id,rating,url,opening_hours",
-          key: process.env.YOUTUBE_API_KEY,
-        };
-        hasValidLocationParams = true;
-        break;
+
+      if (url.includes("maps")) {
+        tracerResult = await tracer(url);
+        matches = [
+          ...tracerResult.matchAll(new RegExp("0[xX][0-9a-fA-F]+", "g")),
+        ];
+        const hexLattitude = matches[0],
+          hexLongitude = matches[1];
+        if (hexLattitude && hexLongitude) {
+          locationURLParams = {
+            ftid: `${hexLattitude}:${hexLongitude}`,
+            fields:
+              "business_status,formatted_address,name,geometry,international_phone_number,place_id,rating,url,opening_hours",
+            key: process.env.YOUTUBE_API_KEY,
+          };
+          hasValidLocationParams = true;
+          break;
+        }
+      } else if (url.includes("g.page")) {
+        tracerResult = await tracer(url);
+        if (tracerResult.includes("ludocid")) {
+          matches = tracerResult.match(new RegExp("ludocid=[0-9]+"));
+          if (matches.length) {
+            const cid = matches[0].split("=")[1];
+            if (cid) {
+              locationURLParams = {
+                cid: cid,
+                fields:
+                  "business_status,formatted_address,name,geometry,international_phone_number,place_id,rating,url,opening_hours",
+                key: process.env.YOUTUBE_API_KEY,
+              };
+              hasValidLocationParams = true;
+              break;
+            }
+          }
+        }
       }
     }
   }
+
   if (hasValidLocationParams) {
     try {
       const response = await googleMapsClient.placeDetails({

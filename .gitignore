@@ -109,3 +109,6 @@ dist
 
 # Certs
 *.pem
+
+# testing files
+*testing.js
