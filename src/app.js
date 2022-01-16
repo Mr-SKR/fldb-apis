@@ -137,8 +137,7 @@ app.get("/videos", async (req, res) => {
     }
 
     const allVideos = await Video.find({}, fields);
-    setTimeout(() => res.send(allVideos), 3000);
-    // res.send(allVideos);
+    res.send(allVideos);
   } catch (err) {
     console.error(err);
     logger.error(err);
