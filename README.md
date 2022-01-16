@@ -2,7 +2,9 @@
 
 ## About
 
-TODO
+Food Lovers Database(FLDb) is a collection of food Vlogs from [Food Lovers TV](https://www.youtube.com/channel/UC-Lq6oBPTgTXT_K-ylWL6hg)
+
+This repo contains code related to backend APIs that serves the frontend [FLDB frontend](https://github.com/Mr-SKR/FLDB). More info: https://fl-db.in/about
 
 ## Project Setup
 
