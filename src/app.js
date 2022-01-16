@@ -129,10 +129,16 @@ app.get("/", async (_req, res) => {
   res.send("Welcome to Food Lovers Database (FLDB) APIs");
 });
 
-app.get("/videos", async (_req, res) => {
+app.get("/videos", async (req, res) => {
+  let fields = "";
   try {
-    const allVideos = await Video.find({});
-    res.send(allVideos);
+    if (req.query.fields) {
+      fields = req.query.fields.replace(/,/g, " ");
+    }
+
+    const allVideos = await Video.find({}, fields);
+    setTimeout(() => res.send(allVideos), 3000);
+    // res.send(allVideos);
   } catch (err) {
     console.error(err);
     logger.error(err);
