@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Mr-SKR/fldb-apis#readme",
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.3.5",
+    "crypto-js": "^4.1.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "get-urls": "^10.0.1",

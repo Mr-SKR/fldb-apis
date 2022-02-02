@@ -1,6 +1,5 @@
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
-// TODO: Send detailed logs to relic
 require("newrelic");
 
 const express = require("express");
@@ -11,6 +10,7 @@ const mongoose = require("mongoose");
 const cron = require("node-cron");
 const fs = require(`fs`);
 
+const { decrypt } = require("./utils/crypto");
 const config = require("./config/config");
 const { logger } = require("./config/logger");
 
@@ -21,7 +21,7 @@ require("./models/searchIndex");
 const PORT = process.env.PORT || 5000;
 const youtube = google.youtube({
   version: "v3",
-  auth: process.env.YOUTUBE_API_KEY,
+  auth: decrypt(process.env.YOUTUBE_API_KEY, process.env.SECRET),
 });
 
 const Video = mongoose.model("video");
@@ -33,8 +33,37 @@ const scheduler = async () => {
   logger.info("Scheduler execution started");
   try {
     let videosInPlayLists = [],
+      videosInVegPlaylists = [],
+      vegPlaylistVideoIds = [],
       videoDetailsList = [],
       results = [];
+
+    for (const playlistId of config.vegPlaylistIds) {
+      let playlistResponse = await youtube.playlistItems.list({
+        part: "snippet",
+        playlistId: playlistId,
+      });
+      videosInVegPlaylists = videosInVegPlaylists.concat(
+        playlistResponse.data.items
+      );
+      while (playlistResponse.data.nextPageToken) {
+        playlistResponse = await youtube.playlistItems.list({
+          part: "snippet",
+          playlistId: playlistId,
+          pageToken: playlistResponse.data.nextPageToken,
+        });
+        videosInVegPlaylists = videosInVegPlaylists.concat(
+          playlistResponse.data.items
+        );
+      }
+    }
+
+    for (const videoInVegPlaylists of videosInVegPlaylists) {
+      vegPlaylistVideoIds = vegPlaylistVideoIds.concat(
+        videoInVegPlaylists.snippet.resourceId.videoId
+      );
+    }
+
     for (const playlistId of config.playlistIds) {
       let playlistResponse = await youtube.playlistItems.list({
         part: "snippet",
@@ -65,12 +94,14 @@ const scheduler = async () => {
     }
     console.log("Video details collection complete");
     logger.info("Video details collection complete");
+
     for (const video of videoDetailsList) {
       if (video?.snippet?.description && video?.snippet?.title && video?.id) {
         const existingVideo = await SearchIndex.findOne({
           videoId: video.id,
         });
         if (!existingVideo) {
+          logger.info(`Adding ${video.id}`);
           const geodetails = await fetchLocationDetails(
             video.snippet.description
           );
@@ -78,6 +109,8 @@ const scheduler = async () => {
             videoId: video.id,
             videoTitle: video.snippet.title,
             videoDescription: video.snippet.description,
+            hasVeg: vegPlaylistVideoIds.includes(video.id),
+            thumbnail: video.snippet.thumbnails.medium.url,
             ...geodetails,
           });
         }
@@ -99,8 +132,9 @@ const scheduler = async () => {
     logger.error(err);
   }
 };
-
-cron.schedule("* * 10 * *", scheduler);
+scheduler();
+// 11 p.m every day
+cron.schedule("0 23 * * *", scheduler);
 
 const app = express();
 // parse application/x-www-form-urlencoded

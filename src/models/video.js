@@ -14,6 +14,8 @@ const videoSchema = new Schema({
   place_id: String,
   rating: String,
   url: String,
+  hasVeg: Boolean,
+  thumbnail: String,
 });
 
 mongoose.model("video", videoSchema);

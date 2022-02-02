@@ -3,6 +3,7 @@ const tracer = require("trace-redirect").default;
 const isValidUrl = require("is-valid-http-url");
 const { Client } = require("@googlemaps/google-maps-services-js");
 
+const { decrypt } = require("./crypto");
 const config = require("../config/config");
 const { logger } = require("../config/logger");
 
@@ -34,7 +35,7 @@ const fetchLocationDetails = async (description) => {
             ftid: `${hexLattitude}:${hexLongitude}`,
             fields:
               "business_status,formatted_address,name,geometry,international_phone_number,place_id,rating,url,opening_hours",
-            key: process.env.YOUTUBE_API_KEY,
+            key: decrypt(process.env.YOUTUBE_API_KEY, process.env.SECRET),
           };
           hasValidLocationParams = true;
           break;
@@ -50,7 +51,7 @@ const fetchLocationDetails = async (description) => {
                 cid: cid,
                 fields:
                   "business_status,formatted_address,name,geometry,international_phone_number,place_id,rating,url,opening_hours",
-                key: process.env.YOUTUBE_API_KEY,
+                key: decrypt(process.env.YOUTUBE_API_KEY, process.env.SECRET),
               };
               hasValidLocationParams = true;
               break;
