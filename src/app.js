@@ -132,7 +132,7 @@ const scheduler = async () => {
     logger.error(err);
   }
 };
-scheduler();
+
 // 11 p.m every day
 cron.schedule("0 23 * * *", scheduler);
 
