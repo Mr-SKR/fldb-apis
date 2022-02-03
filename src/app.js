@@ -110,7 +110,10 @@ const scheduler = async () => {
             videoTitle: video.snippet.title,
             videoDescription: video.snippet.description,
             hasVeg: vegPlaylistVideoIds.includes(video.id),
-            thumbnail: video.snippet.thumbnails.medium.url,
+            thumbnail: {
+              small: video.snippet.thumbnails.medium.url,
+              large: video.snippet.thumbnails.maxres.url,
+            },
             ...geodetails,
           });
         }

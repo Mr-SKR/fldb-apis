@@ -15,7 +15,7 @@ const videoSchema = new Schema({
   rating: String,
   url: String,
   hasVeg: Boolean,
-  thumbnail: String,
+  thumbnail: Object,
 });
 
 mongoose.model("video", videoSchema);
