@@ -148,7 +148,7 @@ app.use(bodyParser.json());
 
 if (process.env.NODE_ENV === "production") {
   app.use((_req, res, next) => {
-    res.append("Access-Control-Allow-Origin", ["https://fl-db.in"]);
+    res.append("Access-Control-Allow-Origin", ["*"]);
     res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
     res.append("Access-Control-Allow-Headers", "Content-Type");
     next();
@@ -189,6 +189,7 @@ app.get("/videos/:videoId", async (req, res) => {
   try {
     const video = await Video.find({ videoId: req.params.videoId });
     if (!video.length) {
+      err = `Invalid videoId: ${videoId}`;
       console.error(err);
       logger.error(err);
       // TODO: Return error status code
@@ -228,9 +229,13 @@ if (process.env.NODE_ENV === "production") {
   const key = fs.readFileSync(path.resolve(__dirname, "./cert/key.pem")),
     cert = fs.readFileSync(path.resolve(__dirname, "./cert/cert.pem"));
 
-  const server = https.createServer({ key: key, cert: cert }, app);
+  // const server = https.createServer({ key: key, cert: cert }, app);
 
-  server.listen(PORT, () => {
-    console.log(`Example app listening at https://localhost:${PORT}`);
+  // server.listen(PORT, () => {
+  //   console.log(`Example app listening at https://localhost:${PORT}`);
+  // });
+  app.listen(PORT, () => {
+    console.log(`Example app listening at http://localhost:${PORT}`);
+    logger.info(`Example app listening at http://localhost:${PORT}`);
   });
 }
