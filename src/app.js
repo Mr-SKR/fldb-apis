@@ -148,7 +148,9 @@ app.use(bodyParser.json());
 
 if (process.env.NODE_ENV === "production") {
   app.use((_req, res, next) => {
-    res.append("Access-Control-Allow-Origin", ["*"]);
+    res.append("Access-Control-Allow-Origin", [
+      "https://foodloversdatabase.com",
+    ]);
     res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
     res.append("Access-Control-Allow-Headers", "Content-Type");
     next();
